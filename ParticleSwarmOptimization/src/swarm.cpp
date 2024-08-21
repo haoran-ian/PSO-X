@@ -397,6 +397,9 @@ void Swarm::getInformants(Configuration* config, int pPosinSwarm, long int itera
 			}
 			TMP_vect.clear();
 		}
+		if (config->getDistributionNPP() == DIST_COYOTE){
+			//TODO
+		}
 	}
 }
 

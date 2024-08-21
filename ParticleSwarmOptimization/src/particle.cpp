@@ -24,7 +24,8 @@ Particle::Particle(){
 	id = -1;
 	ranking = -1;
 	parent =-1;
-	stereotype = -1;
+	subswarm = -1;
+	age = -1;
 	lbestID = -1;
 	velocity = NULL;
 	minVelLimit = 0;					//minimum velocity -v_max = (x_max-x_min)/2
@@ -44,7 +45,12 @@ Particle::Particle (Problem* problem, Configuration* config, int identifier, lon
 	id = identifier;
 	ranking = 0;
 	parent = 0;
-	stereotype = 0;
+	//TODO: Improve the way subswarms are handled
+	if (identifier %2 == 0)
+		subswarm = 0;
+	else
+		subswarm = 1;
+	age = 0;
 	lbestID = -1;
 
 	current.x = new double[size];
@@ -74,7 +80,8 @@ Particle::Particle (const Particle &p){
 	id = p.id;
 	ranking = p.ranking;
 	parent = p.parent;
-	stereotype = p.stereotype;
+	subswarm = p.subswarm;
+	age = p.age;
 	lbestID = p.lbestID;
 
 	if(!init){
@@ -113,7 +120,7 @@ Particle& Particle::operator= (const Particle& p){
 		id = p.id;
 		ranking = p.ranking;
 		parent = p.parent;
-		stereotype = p.stereotype;
+		subswarm = p.subswarm;
 		lbestID = p.lbestID;
 
 		if(!init){
@@ -341,6 +348,17 @@ void Particle::move(Configuration* config, long int iteration, double omega1, do
 					vect_distribution,
 					vect_PbestMinusPosition);
 		}
+		if (config->getDistributionNPP() == DIST_COYOTE){
+					computeSubtractionPerturbationRotation(
+							config,
+							vect_PbestMinusPosition,
+							iteration,
+							solImproved);
+					getAdditiveStochasticDNPP(
+							config,
+							vect_distribution,
+							vect_PbestMinusPosition);
+				}
 	}
 	//Compute new position
 	for (int i=0;i<size;i++) {
@@ -458,6 +476,10 @@ void Particle::computeSubtractionPerturbationRotation(
 			vect_PbestMinusPosition.at(j).at(i) = applyInformedPerturbation(config, pertMagnitude, neighbors.at(informants[j])->pbest.x[i], i, iteration);
 			if (config->getDistributionNPP() != DIST_ADD_STOCH)
 				vect_PbestMinusPosition.at(j).at(i) = vect_PbestMinusPosition.at(j).at(i) -current.x[i];
+
+			//TODO: Add computation of coyote new position
+			//      check that it is done considering the subswarm
+			//      double randval = RNG::randVal(0,1);
 		}
 	}
 	if (config->getDistributionNPP() != DIST_ADD_STOCH) {

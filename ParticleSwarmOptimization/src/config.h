@@ -219,6 +219,7 @@
 #define DIST_RECTANGULAR				0
 #define DIST_SPHERICAL					1
 #define DIST_ADD_STOCH 					2
+#define DIST_COYOTE 					3
 
 #define PERT1_NONE						0
 #define PERT1_GAUSSIAN					1

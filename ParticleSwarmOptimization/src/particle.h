@@ -31,8 +31,9 @@ protected:
 	int id;
 	int ranking;
 	int parent;
-	int stereotype;
+	int subswarm;
 	int lbestID;
+	int age;
 
 	/*Solution variables*/
 	//Each particle has to remember this three vectors at each iteration
