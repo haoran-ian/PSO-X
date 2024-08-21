@@ -1,0 +1,68 @@
+
+PSO-X is being executed with the next parameters:
+  competition:       CEC05
+  problem:           0
+  dimensions:        10
+  minInitRange:      -100
+  maxInitRange:      100
+  seed:              28
+  evaluations:       5000
+  iterations:        147
+  particles:         34
+  reinitilize_pos:   NO
+  detect_stagnation: NO
+  perturbedlBest:    NO
+  populationCS:      POP_CONSTANT
+  modelOfInfluence:  BEST_OF_NEIGHBORHOOD
+  topology:          TOP_VONNEUMANN
+  randNeighbor:      YES
+  velocity clamped:  NO
+  omega1CS:          CONSTANT
+  inertia:           0.6615
+  omega2CS:          ONE
+  omega3CS:          ZERO (no additive perturbation)
+  accelCoeffCS:      CONSTANT
+  phi_1:             2.3706
+  phi_2:             0.8914
+  perturbation1CS:   NONE
+  perturbation2CS:   NONE
+  randomMatrix:      DIAGONAL
+  DistributionNPP:   RECTANGULAR
+
+
+Problem parameters:
+  dimensions:         10
+  evaluations:        34
+  maxEvaluations:     5000
+  optimum:            0.000000e+00
+  oldResult:          6.730992e+04
+  firstEvaluation:    1
+  bestSolutionValue:  1.864398e+04
+  hasBounds:          1
+  vID:                1
+  lowerBound:         -1.000000e+02
+  upperBound:         1.000000e+02
+
+iteration: 1 func_evaluations: 34 best: 1.039618e+04
+iteration: 2 func_evaluations: 68 best: 1.016864e+04
+iteration: 3 func_evaluations: 102 best: 1.016864e+04
+iteration: 4 func_evaluations: 136 best: 1.016864e+04
+iteration: 5 func_evaluations: 170 best: 9.322891e+03
+iteration: 6 func_evaluations: 204 best: 9.322891e+03
+iteration: 7 func_evaluations: 238 best: 6.773814e+03
+iteration: 8 func_evaluations: 272 best: 5.868145e+03
+iteration: 9 func_evaluations: 306 best: 4.919347e+03
+iteration: 10 func_evaluations: 340 best: 4.530205e+03
+iteration: 12 func_evaluations: 408 best: 4.149161e+03
+iteration: 18 func_evaluations: 612 best: 1.666271e+03
+iteration: 36 func_evaluations: 1224 best: 2.189407e+02
+iteration: 54 func_evaluations: 1836 best: 5.290375e+01
+iteration: 72 func_evaluations: 2448 best: 3.089588e+01
+iteration: 90 func_evaluations: 3060 best: 4.163620e+00
+iteration: 108 func_evaluations: 3672 best: 5.664097e-01
+iteration: 126 func_evaluations: 4284 best: 2.533991e-01
+iteration: 136 func_evaluations: 4624 best: 1.060668e-01
+iteration: 140 func_evaluations: 4760 best: 9.997511e-02
+iteration: 144 func_evaluations: 4896 best: 3.463261e-02
+Total time: 0.017104 sec
+Best 2.963921e-02
