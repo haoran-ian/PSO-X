@@ -20,22 +20,12 @@ file(GLOB SOURCES
     ${CMAKE_SOURCE_DIR}/src/Functions/*.cpp
 )
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+
 # 查找并链接 GSL 库
 find_package(GSL REQUIRED)
 include_directories(${GSL_INCLUDE_DIRS})
 
 # 生成可执行文件
 add_executable(pso ${SOURCES})
-
-# find_package(GSL REQUIRED)
-# target_link_libraries(pso GSL::gsl GSL::gslcblas)
-
-# 链接 GSL 库
-# target_link_libraries(pso)
-
 target_link_libraries(pso ${GSL_LIBRARIES} ${GSL_CBLAS_LIBRARIES})
-
-# # 添加 GCC 特定的选项（可选）
-# if(CMAKE_COMPILER_IS_GNUCXX)
-#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
-# endif()
