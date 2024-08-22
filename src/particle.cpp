@@ -1291,6 +1291,15 @@ int Particle::getlBestID()
 	return (lbestID);
 }
 
+void Particle::setlMedianID(int m_ID)
+{
+	lmedianID = m_ID;
+}
+int Particle::getlMedianID()
+{
+	return (lmedianID);
+}
+
 /*Check the neighborhood for the best particle */
 int Particle::getBestOfNeibourhood()
 {
