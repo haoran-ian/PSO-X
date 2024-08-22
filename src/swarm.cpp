@@ -477,6 +477,18 @@ void Swarm::getInformants(Configuration *config, int pPosinSwarm, long int itera
 		if (config->getDistributionNPP() == DIST_COYOTE)
 		{
 			// TODO
+			swarm.at(pPosinSwarm)->informants.clear();
+			vector<Particle *> groupOfSubswarm = swarm.at(pPosinSwarm)->splitSubswarmFromNeibourhood();
+			int alphaID = swarm.at(pPosinSwarm)->getBestOfSubswarm();
+			int betaID = swarm.at(pPosinSwarm)->getMedianOfSubswarm();
+			int randID1 = groupOfSubswarm.at(RNG::randVal(0, groupOfSubswarm.size() - 1))->getID();
+			int randID2 = groupOfSubswarm.at(RNG::randVal(0, groupOfSubswarm.size() - 1))->getID();
+			swarm.at(pPosinSwarm)->informants.push_back(alphaID);
+			swarm.at(pPosinSwarm)->informants.push_back(betaID);
+			swarm.at(pPosinSwarm)->informants.push_back(randID1);
+			swarm.at(pPosinSwarm)->informants.push_back(randID2);
+			// cout << "alphaID: " << alphaID << " betaID: " << betaID
+			// 	 << " randID1: " << randID1 << " randID2: " << randID2 << endl;
 		}
 	}
 }
