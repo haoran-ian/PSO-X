@@ -101,11 +101,11 @@ public:
 	void printNeighborByID(int id);
 
 	// Velocity and position computation
-	void computeSubtractionPerturbationRotation(Configuration *config, vector<vector<double>> &vect_PbestMinusPosition,
+	void computeSubtractionPerturbationRotation(Configuration *config, vector<vector<double> > &vect_PbestMinusPosition,
 												long int iteration, int solImprov);
-	void getRectangularDNPP(Configuration *config, double vect_distribution[], vector<vector<double>> &vect_PbestMinusPosition);
-	void getSphericalDNPP(Configuration *config, double vect_distribution[], vector<vector<double>> &vect_PbestMinusPosition);
-	void getAdditiveStochasticDNPP(Configuration *config, double vect_distribution[], vector<vector<double>> &vect_PbestMinusPosition);
+	void getRectangularDNPP(Configuration *config, double vect_distribution[], vector<vector<double> > &vect_PbestMinusPosition);
+	void getSphericalDNPP(Configuration *config, double vect_distribution[], vector<vector<double> > &vect_PbestMinusPosition);
+	void getAdditiveStochasticDNPP(Configuration *config, double vect_distribution[], vector<vector<double> > &vect_PbestMinusPosition);
 
 	void computeAC(Configuration *config, double &c1, double &c2);
 	int getRandomInformantPosition();
@@ -119,12 +119,13 @@ public:
 
 	// Random Matrix
 	void computeRndMatrix(Configuration *config, double **rndMatrix, int RmatrixType, double angle);
-	void multiplyVectorByRndMatrix(Configuration *config, vector<vector<double>> &vect_PbestMinusPosition, int informant, double **rndMatrix,
+	void multiplyVectorByRndMatrix(Configuration *config, vector<vector<double> > &vect_PbestMinusPosition, int informant, double **rndMatrix,
 								   int RmatrixType, int solImprov, long int iteration);
 	double getAnAngle(Configuration *config, int solImprov, long int iteration);
 
 	// Frankenstein's members
 	int getID();
+	int getSubswarm();
 	void setID(int newID);
 	void eraseNeighborbyID(int nid);
 	int getRandomNonAdjacentNeighborID(Configuration *config);
