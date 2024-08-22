@@ -34,7 +34,6 @@ protected:
 	int parent;
 	int subswarm;
 	int lbestID;
-	int lmedianID;
 	int age;
 
 	/*Solution variables*/
@@ -77,11 +76,11 @@ public:
 
 	void addNeighbour(Particle *p);
 	int getBestOfNeibourhood();
-	int getMedianOfNeibourhood();
+	int getBestOfSubswarm();
+	int getMedianOfSubswarm();
+	vector<Particle *> splitSubswarmFromNeibourhood();
 	int getlBestID();
-	int getlMedianID();
 	void setlBestID(int gB_ID);
-	void setlMedianID(int gM_ID);
 
 	void updatelBestParticle(double *x, double eval);
 	unsigned int getNeighborhoodSize();

@@ -27,7 +27,6 @@ Particle::Particle()
 	subswarm = -1;
 	age = -1;
 	lbestID = -1;
-	lmedianID = -1;
 	velocity = NULL;
 	minVelLimit = 0; // minimum velocity -v_max = (x_max-x_min)/2
 	maxVelLimit = 0; // maximum velocity  v_max
@@ -54,7 +53,6 @@ Particle::Particle(Problem *problem, Configuration *config, int identifier, long
 		subswarm = 1;
 	age = 0;
 	lbestID = -1;
-	lmedianID = -1;
 
 	current.x = new double[size];
 	pbest.x = new double[size];
@@ -89,7 +87,6 @@ Particle::Particle(const Particle &p)
 	subswarm = p.subswarm;
 	age = p.age;
 	lbestID = p.lbestID;
-	lmedianID = p.lmedianID;
 
 	if (!init)
 	{
@@ -135,7 +132,6 @@ Particle &Particle::operator=(const Particle &p)
 		parent = p.parent;
 		subswarm = p.subswarm;
 		lbestID = p.lbestID;
-		lmedianID = p.lmedianID;
 
 		if (!init)
 		{
@@ -1291,15 +1287,6 @@ int Particle::getlBestID()
 	return (lbestID);
 }
 
-void Particle::setlMedianID(int m_ID)
-{
-	lmedianID = m_ID;
-}
-int Particle::getlMedianID()
-{
-	return (lmedianID);
-}
-
 /*Check the neighborhood for the best particle */
 int Particle::getBestOfNeibourhood()
 {
@@ -1326,17 +1313,16 @@ int Particle::getBestOfNeibourhood()
 		return (lbestID);
 }
 
-int Particle::getMedianOfNeibourhood()
+int Particle::getBestOfSubswarm()
 {
-	// Copy the neighbors first then sort the neighbors by their pbest evaluations
-	vector<Particle *> sortedNeighbors(neighbors);
-	sort(sortedNeighbors.begin(), sortedNeighbors.end(), [](Particle *a, Particle *b)
-		 { return a->getPbestEvaluation() < b->getPbestEvaluation(); });
-	vector<Particle *> groupOfSubswarm;
-	for (unsigned int i = 0; i < sortedNeighbors.size(); i++)
-		if (sortedNeighbors.at(i)->getSubswarm() == this->subswarm)
-			groupOfSubswarm.push_back(sortedNeighbors.at(i));
+	vector<Particle *> groupOfSubswarm = splitSubswarmFromNeibourhood();
+	return (groupOfSubswarm.at(0)->getID());
+}
+
+int Particle::getMedianOfSubswarm()
+{
 	int pos;
+	vector<Particle *> groupOfSubswarm = splitSubswarmFromNeibourhood();
 	if (groupOfSubswarm.size() % 2 == 0)
 		pos = groupOfSubswarm.size() / 2;
 	else
@@ -1346,6 +1332,19 @@ int Particle::getMedianOfNeibourhood()
 	// 	 << groupOfSubswarm.size() << " Pos: " << groupOfSubswarm[pos]->getID()
 	// 	 << " " << pos << endl;
 	return (groupOfSubswarm.at(pos)->getID());
+}
+
+vector<Particle *> Particle::splitSubswarmFromNeibourhood()
+{
+	// Copy the neighbors first then sort the neighbors by their pbest evaluations
+	vector<Particle *> sortedNeighbors(neighbors);
+	vector<Particle *> groupOfSubswarm;
+	sort(sortedNeighbors.begin(), sortedNeighbors.end(), [](Particle *a, Particle *b)
+		 { return a->getPbestEvaluation() < b->getPbestEvaluation(); });
+	for (unsigned int i = 0; i < sortedNeighbors.size(); i++)
+		if (sortedNeighbors.at(i)->getSubswarm() == this->subswarm)
+			groupOfSubswarm.push_back(sortedNeighbors.at(i));
+	return (groupOfSubswarm);
 }
 
 void Particle::addNeighbour(Particle *p)
