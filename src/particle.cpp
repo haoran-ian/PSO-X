@@ -409,12 +409,13 @@ void Particle::move(Configuration *config, long int iteration, double omega1, do
 			computeSubtractionPerturbationRotation(
 				config,
 				vect_PbestMinusPosition,
+				vect_distribution,
 				iteration,
 				solImproved);
-			getAdditiveStochasticDNPP(
-				config,
-				vect_distribution,
-				vect_PbestMinusPosition);
+//			getAdditiveStochasticDNPP(
+//				config,
+//				vect_distribution,
+//				vect_PbestMinusPosition);
 		}
 	}
 	// Compute new position
@@ -606,6 +607,91 @@ void Particle::computeSubtractionPerturbationRotation(
 		{
 			// new_x[i] = current.x[i] + r1 * delta1[i] + r2 * delta2[i];
 			current.x[i] = current.x[i] + r1 * delta1[i] + r2 * delta2[i];
+			// if (current.x[i] < config->getMinInitBound())
+			// 	current.x[i] = config->getMinInitBound();
+			// if (current.x[i] > config->getMaxInitBound())
+			// 	current.x[i] = config->getMaxInitBound();
+		}
+		// long double res = problem->getFunctionValue(new_x);
+		// if (res > current.eval)
+		// 	for (unsigned int i = 0; i < size; i++)
+		// 		current.x[i] = new_x[i];
+	}
+}
+
+void Particle::computeSubtractionPerturbationRotation(
+	Configuration *config,
+	vector<vector<double>> &vect_PbestMinusPosition, // This is the vector we aim to compute here
+	double vect_distribution[],
+	long int iteration,
+	int solImprov)
+{
+
+	double pertMagnitude[size]; // vector containing the magnitude of the perturbation that will be applied to each dimension
+
+	if (config->verboseMode() && (config->verboseLevel() >= VERBOSE_LEVEL_COMPUTATIONS))
+	{
+		cout << "\n\tvec::p[" << id << "].x:\t  [";
+		for (int i = 0; i < size; i++)
+		{
+			cout << fixed << current.x[i] << " ";
+		}
+		cout << "]" << endl;
+	}
+	// Get the p^k-x^i of all Informants
+	for (unsigned int j = 0; j < informants.size(); j++)
+	{
+
+		if (config->verboseMode() && (config->verboseLevel() >= VERBOSE_LEVEL_COMPUTATIONS))
+		{
+			cout << "\tvec::inf.p[" << neighbors[informants[j]]->getID() << "].pb: [";
+			for (int i = 0; i < size; i++)
+			{
+				cout << fixed << neighbors[informants[j]]->pbest.x[i] << " ";
+			}
+			cout << "]" << endl;
+		}
+		// informant-wise perturbation magnitude
+		setPerturbation1Magnitude(config, pertMagnitude, current.x, neighbors.at(informants[j])->pbest.x);
+
+		for (int i = 0; i < size; i++)
+		{
+			vect_PbestMinusPosition.at(j).at(i) = applyInformedPerturbation(config, pertMagnitude, neighbors.at(informants[j])->pbest.x[i], i, iteration);
+			if (config->getDistributionNPP() != DIST_ADD_STOCH)
+				vect_PbestMinusPosition.at(j).at(i) = vect_PbestMinusPosition.at(j).at(i) - current.x[i];
+		}
+	}
+	if (config->getDistributionNPP() == DIST_COYOTE)
+	{
+		double *delta1;
+		double *delta2;
+		double *new_x;
+		delta1 = new double[size];
+		delta2 = new double[size];
+		new_x = new double[size];
+		int alpha = 0, beta = 0, rc1 = 0, rc2 = 0;
+		for (unsigned int i = 0; i < neighbors.size(); i++)
+			if (neighbors[i]->getID() == informants[0])
+				alpha = i;
+			else if (neighbors[i]->getID() == informants[1])
+				beta = i;
+			else if (neighbors[i]->getID() == informants[2])
+				rc1 = i;
+			else if (neighbors[i]->getID() == informants[3])
+				rc2 = i;
+		for (unsigned int i = 0; i < size; i++)
+		{
+			delta1[i] = neighbors[alpha]->current.x[i] - neighbors[rc1]->current.x[i];
+			delta2[i] = neighbors[beta]->current.x[i] - neighbors[rc2]->current.x[i];
+			// delta1[i] = neighbors[alpha]->pbest.x[i];
+			// delta2[i] = neighbors[beta]->pbest.x[i];
+		}
+		double r1 = RNG::randVal(0, 1);
+		double r2 = RNG::randVal(0, 1);
+		for (unsigned int i = 0; i < size; i++)
+		{
+			// new_x[i] = current.x[i] + r1 * delta1[i] + r2 * delta2[i];
+			vect_distribution[i] = vect_distribution[i] + r1 * delta1[i] + r2 * delta2[i];
 			// if (current.x[i] < config->getMinInitBound())
 			// 	current.x[i] = config->getMinInitBound();
 			// if (current.x[i] > config->getMaxInitBound())

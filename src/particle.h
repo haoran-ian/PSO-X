@@ -104,6 +104,9 @@ public:
 	// Velocity and position computation
 	void computeSubtractionPerturbationRotation(Configuration *config, vector<vector<double>> &vect_PbestMinusPosition,
 												long int iteration, int solImprov);
+	void computeSubtractionPerturbationRotation(Configuration *config, vector<vector<double>> &vect_PbestMinusPosition,
+			double vect_distribution[], long int iteration, int solImprov);
+
 	void getRectangularDNPP(Configuration *config, double vect_distribution[], vector<vector<double>> &vect_PbestMinusPosition);
 	void getSphericalDNPP(Configuration *config, double vect_distribution[], vector<vector<double>> &vect_PbestMinusPosition);
 	void getAdditiveStochasticDNPP(Configuration *config, double vect_distribution[], vector<vector<double>> &vect_PbestMinusPosition);
