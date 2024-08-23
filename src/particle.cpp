@@ -552,10 +552,6 @@ void Particle::computeSubtractionPerturbationRotation(
 			vect_PbestMinusPosition.at(j).at(i) = applyInformedPerturbation(config, pertMagnitude, neighbors.at(informants[j])->pbest.x[i], i, iteration);
 			if (config->getDistributionNPP() != DIST_ADD_STOCH)
 				vect_PbestMinusPosition.at(j).at(i) = vect_PbestMinusPosition.at(j).at(i) - current.x[i];
-
-			// TODO: Add computation of coyote new position
-			//       check that it is done considering the subswarm
-			//       double randval = RNG::randVal(0,1);
 		}
 	}
 	if (config->getDistributionNPP() != DIST_ADD_STOCH)
@@ -578,6 +574,47 @@ void Particle::computeSubtractionPerturbationRotation(
 		for (int i = 0; i < size; i++)
 			delete[] rndMatrix[i];
 		delete[] rndMatrix;
+	}
+	if (config->getDistributionNPP() == DIST_COYOTE)
+	{
+		double *delta1;
+		double *delta2;
+		double *new_x;
+		delta1 = new double[size];
+		delta2 = new double[size];
+		new_x = new double[size];
+		int alpha = 0, beta = 0, rc1 = 0, rc2 = 0;
+		for (unsigned int i = 0; i < neighbors.size(); i++)
+			if (neighbors[i]->getID() == informants[0])
+				alpha = i;
+			else if (neighbors[i]->getID() == informants[1])
+				beta = i;
+			else if (neighbors[i]->getID() == informants[2])
+				rc1 = i;
+			else if (neighbors[i]->getID() == informants[3])
+				rc2 = i;
+		for (unsigned int i = 0; i < size; i++)
+		{
+			delta1[i] = neighbors[alpha]->current.x[i] - neighbors[rc1]->current.x[i];
+			delta2[i] = neighbors[beta]->current.x[i] - neighbors[rc2]->current.x[i];
+			// delta1[i] = neighbors[alpha]->pbest.x[i];
+			// delta2[i] = neighbors[beta]->pbest.x[i];
+		}
+		double r1 = RNG::randVal(0, 1);
+		double r2 = RNG::randVal(0, 1);
+		for (unsigned int i = 0; i < size; i++)
+		{
+			// new_x[i] = current.x[i] + r1 * delta1[i] + r2 * delta2[i];
+			current.x[i] = current.x[i] + r1 * delta1[i] + r2 * delta2[i];
+			// if (current.x[i] < config->getMinInitBound())
+			// 	current.x[i] = config->getMinInitBound();
+			// if (current.x[i] > config->getMaxInitBound())
+			// 	current.x[i] = config->getMaxInitBound();
+		}
+		// long double res = problem->getFunctionValue(new_x);
+		// if (res > current.eval)
+		// 	for (unsigned int i = 0; i < size; i++)
+		// 		current.x[i] = new_x[i];
 	}
 }
 
@@ -1327,10 +1364,6 @@ int Particle::getMedianOfSubswarm()
 		pos = groupOfSubswarm.size() / 2;
 	else
 		pos = (groupOfSubswarm.size() - 1) / 2;
-	// cout << "====================" << endl;
-	// cout << "Particle: " << id << " Subswarm: " << subswarm << " Group: "
-	// 	 << groupOfSubswarm.size() << " Pos: " << groupOfSubswarm[pos]->getID()
-	// 	 << " " << pos << endl;
 	return (groupOfSubswarm.at(pos)->getID());
 }
 
@@ -1340,7 +1373,7 @@ vector<Particle *> Particle::splitSubswarmFromNeibourhood()
 	vector<Particle *> sortedNeighbors(neighbors);
 	vector<Particle *> groupOfSubswarm;
 	sort(sortedNeighbors.begin(), sortedNeighbors.end(), [](Particle *a, Particle *b)
-		 { return a->getPbestEvaluation() < b->getPbestEvaluation(); });
+		 { return a->getCurrentPosition() < b->getCurrentPosition(); });
 	for (unsigned int i = 0; i < sortedNeighbors.size(); i++)
 		if (sortedNeighbors.at(i)->getSubswarm() == this->subswarm)
 			groupOfSubswarm.push_back(sortedNeighbors.at(i));
